@@ -1,0 +1,53 @@
+﻿
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="ModalBuscaCliente">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" action="@Url.Action("FiltrarClienteModal","Cliente")">
+                <fieldset>
+                    <div class="form-row">
+                        <div class="col-md-5">
+                            <label class="" for="Nome"><b>Nome</b></label>
+                            <input type="text" class="form-control" id="Nome" name="Nome" placeholder="Nome">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="" for="Nick"><b>Nick</b> (apelido)</label>
+                            <input type="text" class="form-control" name="Apelido" id="Apelido" placeholder="Nick">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="" for="Codigo"><b>Código</b> (Código do dia)</label>
+                            <input type="text" class="form-control" id="Codigo" name="Codigo" placeholder="Código">
+                        </div>
+                    </div>
+
+                </fieldset>
+                <div class="btn-block">
+                    <button type="submit" class="btn btn-dark btn-lg wt100">Pesquisar</button>
+                </div>
+            </form>
+            <table class="table table-sm table-dark">
+                <thead class="">
+                    <tr>
+                        <th scope="col">Nome</th>
+                        <th scope="col">CPF</th>
+                        <th scope="col">Celular</th>
+                        <th scope="col">Conta</th>
+                        <th scope="col">Alteração</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Nome</td>
+                            <td>@item.CPF</td>
+                            <td>@item.Celular</td>
+                            <td>@item.Agencia @item.Conta</td>
+                            <td><a class="btn-dark" href="@Url.Action("BuscarPorId", new { Id = item.Id })">Alterar</a></td>
+                        </tr>
+                    }
+                </tbody>
+                </table>
+        </div>
+    </div>
+</div>

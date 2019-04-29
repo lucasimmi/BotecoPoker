@@ -1,0 +1,69 @@
+﻿@using BotecoPoker.Dominio.Entidades
+@using BotecoPoker.Dominio.modelos
+@model PaginacaoModel<Cliente, FiltroCliente>
+
+<a type="button" class="btn btn-dark btn-lg" href="@Url.Action("CadastroCliente","Cliente")">Incluir Cliente</a>
+<form class="form-control-lg">
+    <h1 align="center">Pesquisa de Clientes</h1>
+    <fieldset class="form-control-lg">
+        <div class="form-row">
+            <div class="col-md-5">
+                <label class="" for="Nome"><b>Nome</b></label>
+                <input type="text" class="form-control" id="Nome" name="PaginacaoModel.Filtro.Nome" placeholder="Nome" value="@Model.Filtro.Nome">
+            </div>
+            <div class="col-md-4">
+                <label class="" for="Nick"><b>Nick</b></label>
+                <input type="text" class="form-control" name="PaginacaoModel.Filtro.Apelido" id="Apelido" placeholder="Apelido" value="@Model.Filtro.Apelido">
+            </div>
+            <div class="col-md-3">
+                <label class="" for="Codigo"><b>Código</b></label>
+                <input type="text" class="form-control" id="Codigo" name="PaginacaoModel.Filtro.Codigo" placeholder="Código do dia" value="@Model.Filtro.Codigo">
+            </div>
+        </div>
+    </fieldset>
+    <div class="btn-block">
+        <button type="submit" class="btn btn-dark btn-lg wt100">Pesquisar</button>
+    </div>
+</form>
+<br />
+<table class="table table-sm table-dark">
+    <thead class="">
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Codigo</th>
+            <th scope="col">CPF</th>
+            <th scope="col">Celular</th>
+            <th scope="col">Conta</th>
+            <th scope="col">Alteração</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListaModel)
+        {
+            <tr>
+                <td>@item.Nome</td>
+                <td>@item.Codigo</td>
+                <td>@item.CPF</td>
+                <td>@item.Celular</td>
+                <td>Ag: @item.Agencia Nº: @item.Conta</td>
+                <td><a class="btn-dark" href="@Url.Action("BuscarPorId", new { Id = item.Id })">Alterar</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<input hidden value="@Model.Pagina" id="pagina" />
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        @foreach (int pagina in Model.QtdPaginas)
+        {
+            <li class="page-item"><a class="page-link @Model.PrintaPaginaSelecionada(pagina, Model.Pagina)" href="@Url.Action("FiltroCliente", new PaginacaoModel<Cliente, FiltroCliente>(Model,pagina))">@pagina</a></li>
+        }
+    </ul>
+</nav>
+<script>
+    var pagina = document.getElementById("pagina").value;
+    if (pagina != 1)
+        window.scrollTo(0, document.body.scrollHeight);
+</script>

@@ -1,0 +1,42 @@
+﻿@model Produto
+@using BotecoPoker.Dominio.Entidades
+@{
+    var erro = (ViewBag?.erro == "" || ViewBag?.erro == null) ? "" : ViewBag.erro;
+    var classeErro = (erro == "" || erro == null) ? "" : "alert alert-danger";
+}
+<div align="right">
+    <a type="button" class="btn btn-dark btn-lg" href="@Url.Action("FiltroProduto","Produto")">Voltar</a>
+</div>
+<form class="form-control-lg" method="post" action="@Url.Action("CadastroProduto","Produto")">
+
+    <h1 align="center">Cadastro de Produtos</h1>
+    <div class="@classeErro" role="alert">
+        @erro
+    </div>
+    <fieldset class="form-control-lg">
+
+        <span class="form-row">
+            <span class="form-group col-md-3">
+                <label for="Nome" class=""><b>Nome</b></label>
+                <input type="text" name="Nome" class="form-control" placeholder="Nome do Produto" required maxlength="30" value="@Model.Nome">
+            </span>
+            <span class="form-group col-md-3">
+                <label for="ValorVenda"><b>Valor de Venda</b></label>
+                <input type="text" class="form-control" id="Valor" name="Valor" maxlength="6" placeholder="Valor de Venda" required value="@Model.Valor">
+            </span>
+            <span class="form-group col-md-3">
+                <label for="ValorCompra"><b>Valor de Compra</b></label>
+                <input type="text" class="form-control" id="ValorCompra" name="ValorCompra" maxlength="6" placeholder="Valor de Compra" value="@Model.ValorCompra">
+            </span>
+            <span class="form-group col-md-3">
+                <label for="ValorCompra"><b>Estoque</b> (Opcional)</label>
+                <input type="tel" class="form-control" id="QtdEstoque" name="QtdEstoque" maxlength="4" placeholder="Quantidade Estoque" value="@Model.QtdEstoque">
+            </span>
+        </span>
+    </fieldset>
+    <span class="">
+        <input type="submit" class="btn-dark btn-lg btn-block" value="Cadastrar" />
+    </span>
+</form>
+<script src="~/Content/MaskMoney.min.js"></script>
+<script src="~/Content/CadastroProduto.js"></script>

@@ -1,0 +1,115 @@
+﻿@using BotecoPoker.Dominio.Entidades
+@using BotecoPoker.Dominio.modelos
+@model PaginacaoModel<TorneioCliente, FiltroTorneioCliente>
+@{
+    var caixaValido = (ViewBag?.caixaValido == "" || ViewBag?.caixaValido == null) ? "" : ViewBag.caixaValido;
+    var classeErro = (caixaValido == "" || caixaValido == null) ? "" : "alert alert-danger";
+    int contador = 0;
+}
+<a type="button" class="btn btn-dark btn-lg" href="@Url.Action("CadastroTorneioCliente", "TorneioCliente")">Cadastrar Cliente no Torneio</a>
+<form class="form-control-lg">
+    <h1 align="center">Pesquisa de Clientes no Torneio</h1>
+
+    <div class="@classeErro" role="alert">
+        @caixaValido
+    </div>
+
+    <fieldset class="form-control-lg">
+        <div class="form-row">
+            <div class="col-md-5">
+                <label class="" for="Nome"><b>Nome</b></label>
+                <input type="text" class="form-control" id="Nome" placeholder="Nome" name="paginacaoModel.Filtro.NomeCliente" value="@Model.Parametro1">
+            </div>
+            <div class="col-md-4">
+                <label class="" for="Nick"><b>Nick</b> (apelido)</label>
+                <input type="text" class="form-control" id="Nick" placeholder="Nick" name="paginacaoModel.Filtro.ApelidoCliente" value="@Model.Parametro13">
+            </div>
+            <div class="col-md-3">
+                <label class="" for="Codigo"><b>Código</b> (Código do dia)</label>
+                <input type="text" class="form-control" id="Codigo" placeholder="Código" name="paginacaoModel.Filtro.CodigoCliente" value="@Model.Parametro12">
+            </div>
+        </div>
+    </fieldset>
+    <div class="btn-block">
+        <button type="submit" class="btn btn-dark btn-lg wt100">Pesquisar</button>
+    </div>
+</form>
+
+<br />
+<form method="post" action="@Url.Action("AtualizarClientesTorneio", "TorneioCliente")">
+    <div class="">
+        <button type="submit" class="btn btn-dark btn-lg">Atualizar</button>
+        @if (Model.TotalJogadores > 0)
+        {
+            var players = Model.TotalJogadores;
+            <h2 align="right">Jogadores: @players</h2>
+        }
+    </div>
+    <p></p>
+    <h4>
+        <a href="@Url.Action("FiltroTorneioCliente", new {letra = "a"})">A </a><a href="@Url.Action("FiltroTorneioCliente", new {letra = "b"})">B</a>
+        <a href="@Url.Action("FiltroTorneioCliente", new {letra = "c"})">C </a><a href="@Url.Action("FiltroTorneioCliente", new {letra = "d"})">D</a>
+        <a href="@Url.Action("FiltroTorneioCliente", new {letra = "e"})">E </a><a href="@Url.Action("FiltroTorneioCliente", new {letra = "f"})">F</a>
+        <a href="@Url.Action("FiltroTorneioCliente", new {letra = "g"})">G </a><a href="@Url.Action("FiltroTorneioCliente", new {letra = "h"})">H</a>
+        <a href="@Url.Action("FiltroTorneioCliente", new {letra = "i"})">I </a><a href="@Url.Action("FiltroTorneioCliente", new {letra = "j"})">J</a>
+        <a href="@Url.Action("FiltroTorneioCliente", new {letra = "k"})">K </a><a href="@Url.Action("FiltroTorneioCliente", new {letra = "l"})">L</a>
+        <a href="@Url.Action("FiltroTorneioCliente", new {letra = "m"})">M </a><a href="@Url.Action("FiltroTorneioCliente", new {letra = "n"})">N</a>
+        <a href="@Url.Action("FiltroTorneioCliente", new {letra = "o"})">O </a><a href="@Url.Action("FiltroTorneioCliente", new {letra = "p"})">P</a>
+        <a href="@Url.Action("FiltroTorneioCliente", new {letra = "q"})">Q </a><a href="@Url.Action("FiltroTorneioCliente", new {letra = "r"})">R</a>
+        <a href="@Url.Action("FiltroTorneioCliente", new {letra = "s"})">S </a><a href="@Url.Action("FiltroTorneioCliente", new {letra = "t"})">T</a>
+        <a href="@Url.Action("FiltroTorneioCliente", new {letra = "u"})">U </a><a href="@Url.Action("FiltroTorneioCliente", new {letra = "v"})">V</a>
+        <a href="@Url.Action("FiltroTorneioCliente", new {letra = "w"})">W </a><a href="@Url.Action("FiltroTorneioCliente", new {letra = "x"})">X</a>
+        <a href="@Url.Action("FiltroTorneioCliente", new {letra = "y"})">Y </a><a href="@Url.Action("FiltroTorneioCliente", new {letra = "z"})">Z</a> - 
+        <a href="@Url.Action("FiltroTorneioCliente", new {letra = "todos"})">Todos</a>
+    </h4>
+    <table class="table table-sm table-dark">
+        <thead>
+            <tr>
+                <th class="wt15">Cliente</th>
+                <th class="wt15">Torneio</th>
+                <th>BuyIn</th>
+                <th>ReBuy</th>
+                <th>Addon</th>
+                <th>JackPot</th>
+                <th>TaxaAdm</th>
+                <th>Bonús</th>
+                <th>Total</th>
+                <th>Valor Pago</th>
+                <th>Finalizar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var listaModel in Model.ListaModel)
+            {
+                <input name="listaModel[@contador].Id" value="@listaModel.Id" hidden />
+                <input name="listaModel[@contador].IdTorneio" value="@listaModel.IdTorneio" hidden />
+                <input name="listaModel[@contador].IdCliente" value="@listaModel.IdCliente" hidden />
+
+                <tr>
+                    <td name="listaModel[@contador].NomeCliente">@listaModel.NomeCliente</td>
+                    <td name="listaModel[@contador].NomeTorneio">@listaModel.NomeTorneio</td>
+                    <td name="listaModel[@contador].BuyIn"><input class="wt100" type="number" name="listaModel[@contador].BuyIn" value="@listaModel.BuyIn"></td>
+                    <td name="listaModel[@contador].ReBuy"><input class="wt100" type="number" name="listaModel[@contador].ReBuy" value="@listaModel.ReBuy"></td>
+                    <td name="listaModel[@contador].Addon"><input class="wt100" type="number" name="listaModel[@contador].Addon" value="@listaModel.Addon"></td>
+                    <td name="listaModel[@contador].JackPot"><input class="wt100" type="number" name="listaModel[@contador].JackPot" value="@listaModel.JackPot"></td>
+                    <td name="listaModel[@contador].TaxaAdm"><input class="wt100" type="number" name="listaModel[@contador].TaxaAdm" value="@listaModel.TaxaAdm"></td>
+                    <td name="listaModel[@contador].BonusBeneficente"><input type="text" name="listaModel[@contador].BonusBeneficente" value="@listaModel.BonusBeneficente"></td>
+                    <td name="listaModel[@contador].ValorTotal"><input type="text" name="listaModel[@contador].ValorTotal" value="@listaModel.ValorTotal"></td>
+                    <td name="listaModel[@contador].ValorPago"><input type="text" name="listaModel[@contador].ValorPago" value="@listaModel.ValorPago"> </td>
+                    <td name=""><input name="listaModel[@contador].Finalizar" type="checkbox" value="true" /></td>
+                </tr>
+                contador = contador + 1;
+            }
+        </tbody>
+    </table>
+</form>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        @foreach (int pagina in Model.QtdPaginas)
+        {
+            <li class="page-item"><a class="page-link" href="@Url.Action("FiltroCliente", Model)">@Model.Pagina.ToString()</a></li>
+        }
+    </ul>
+</nav>
+

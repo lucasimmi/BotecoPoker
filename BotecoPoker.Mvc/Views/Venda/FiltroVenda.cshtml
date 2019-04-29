@@ -1,0 +1,122 @@
+﻿@using BotecoPoker.Dominio.Entidades
+@using BotecoPoker.Dominio.modelos
+@using BotecoPoker.Dominio.Enumeradores
+@model PaginacaoModel2<Venda, PreVenda, FiltroVenda>
+@{
+    var erro = (ViewBag?.erro == "" || ViewBag?.erro == null) ? "" : ViewBag.erro;
+    var classeErro = (erro == "" || erro == null) ? "" : "alert alert-danger";
+    var nomeCliente = Model?.NomeCliente ?? "";
+}
+
+<input hidden name="erro" value="@erro" />
+<a type="button" class="btn btn-dark btn-lg" href="@Url.Action("IncluirVenda","Venda")">Nova Venda</a>
+<form class="form-control-lg" method="get" action="@Url.Action("FiltroVenda","Venda")">
+    <h1 align="center">Pesquisa de Vendas</h1>
+    <div class="@classeErro" role="alert">
+        @erro
+    </div>
+    <fieldset class="form-control-lg">
+        <div class="form-row">
+            <div class="col-md-5">
+                <label class="" for="Nome"><b>Nome</b></label>
+                <input type="text" class="form-control" id="Nome" placeholder="Nome do Cliente" name="PaginacaoModel.Filtro.NomeCliente" value="@Model.Filtro.NomeCliente">
+            </div>
+            <div class="col-md-4">
+                <label class="" for="Nick"><b>Nick</b> (apelido)</label>
+                <input type="text" class="form-control" id="Nick" placeholder="Nick" name="PaginacaoModel.Filtro.ApelidoCliente" value="@Model.Filtro.ApelidoCliente">
+            </div>
+            <div class="col-md-3">
+                <label class="" for="Codigo"><b>Código</b> (Código do dia)</label>
+                <input type="text" class="form-control" id="Codigo" placeholder="Código" name="PaginacaoModel.Filtro.CodigoCliente" value="@Model.Filtro.CodigoCliente">
+            </div>
+        </div>
+    </fieldset>
+    <div class="btn-block">
+        <button type="submit" class="btn btn-dark btn-lg wt100">Pesquisar</button>
+    </div>
+    <span>
+    </span>
+</form>
+
+
+<br />
+<table class="table table-sm table-dark">
+    <thead class="">
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Data</th>
+            <th scope="col">Valor</th>
+            <th scope="col">Situação</th>
+            <th scope="col">Detalhes</th>
+            <th scope="col">Deletar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListaModel)
+        {
+            var Pago = item.Situacao == SituacaoVenda.Pago ? "Pago" : "Pendente";
+        <tr>
+            <td>@item.Cliente.Nome</td>
+            <td>@item.DataVenda</td>
+            <td>@item.Valor.ToString("c2")</td>
+            <td>@Pago</td>
+            <td><a class="btn-dark" href="@Url.Action("ObterDetalhesVenda", new { idVenda = item.Id })">Detalhes</a></td>
+            <td><a class="btn-dark" href="@Url.Action("DeletarVenda", new { idVenda = item.Id })">Deletar</a></td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<input hidden value="@Model.Pagina" id="pagina" />
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        @foreach (int pagina in Model.QtdPaginas)
+        {
+            <li class="page-item"><a class="page-link @Model.PrintaPaginaSelecionada(pagina, Model.Pagina)" href="@Url.Action("FiltroVenda", new PaginacaoModel2<Venda, PreVenda , FiltroVenda>(Model, pagina))">@pagina</a></li>
+        }
+    </ul>
+</nav>
+<script>
+    var pagina = document.getElementById("pagina").value;
+    if (pagina != 1)
+        window.scrollTo(0, document.body.scrollHeight);
+</script>
+
+@{
+    <input hidden value="@ViewBag.OpenModal" id="abreModal">
+}
+
+<div class="modal fade bd-example-modal-lg" id="ModelDetalhesVenda">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body modal-content">
+            <div class="form-group col-lg-4">
+                <label for="sel1"><b>Cliente:</b></label>
+                <div class="input-group mb-3">
+                    <input type="tel" disabled class="form-control" placeholder="Nome" value="@nomeCliente">
+                </div>
+            </div>
+            <table class="table table-sm table-dark">
+                <thead class="">
+                    <tr>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Valor</th>
+                        <th scope="col">Quantidade</th>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ListaModel2)
+                    {
+                        <tr>
+                            <td>@item.Produto.Nome</td>
+                            <td>@item.Produto.Valor.ToString("c2")</td>
+                            <td>@item.Quantidade</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="~/Content/FiltroVenda.js"></script>

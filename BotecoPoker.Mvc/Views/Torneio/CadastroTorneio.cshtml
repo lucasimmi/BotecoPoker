@@ -1,0 +1,61 @@
+﻿@{
+    var erro = (ViewBag?.erro == "" || ViewBag?.erro == null) ? "" : ViewBag.erro;
+    var classeErro = (erro == "" || erro == null) ? "" : "alert alert-danger";
+}
+<div align="right">
+    <a type="button" class="btn btn-dark btn-lg" href="@Url.Action("FiltroTorneio","Torneio")">Voltar</a>
+</div>
+<form class="form-control-lg" action="@Url.Action("CadastroTorneio","Torneio")" method="post">
+
+    <h1 align="center">Cadastro de Torneios</h1>
+    <div class="@classeErro" role="alert">
+        @erro
+    </div>
+    <fieldset class="form-control-lg">
+
+        <span class="form-row">
+            <span class="form-group col-md-5">
+                <label for="Nome" class=""><b>Nome</b></label>
+                <input type="text" name="Nome" class="form-control" placeholder="Nome do Torneio" required>
+            </span>
+
+            <span class="form-group col-lg-4">
+                <label for="sel1"><b>Situação</b></label>
+                <select class="form-control" id="Ativo" name="Ativo">
+                    <option value="1">Ativo</option>
+                    <option value="0">Inativo</option>
+                </select>
+            </span>
+
+            <span class="form-group col-md-3">
+                <label for="ValorVenda"><b>Buy-In</b></label>
+                <input type="tel" class="form-control" id="BuyIn" name="BuyIn" placeholder="Valor da Entrada" required>
+            </span>
+            <span class="form-group col-md-3">
+                <label for="ReEntrada"><b>Re-Buy</b></label>
+                <input type="tel" class="form-control" id="ReBuy" name="ReBuy" placeholder="Valor da Reentrada">
+            </span>
+            <span class="form-group col-md-3">
+                <label for="Addon"><b>Addon</b></label>
+                <input type="tel" class="form-control" id="Addon" name="Addon" placeholder="Valor do Addon">
+            </span>
+            <span class="form-group col-md-3">
+                <label for="Jantar"><b>Jantar</b></label>
+                <input type="tel" class="form-control" id="Jantar" name="Jantar" placeholder="Valor do Jantar">
+            </span>
+            <span class="form-group col-md-3">
+                <label for="Jantar"><b>Jackpot</b></label>
+                <input type="tel" class="form-control" id="Jackpot" name="JackPot" placeholder="Valor do Jackpot">
+            </span>
+            <span class="form-group col-md-3">
+                <label for="Taxa"><b>Taxa Administrativa</b></label>
+                <input type="tel" class="form-control" id="TaxaAdm" name="TaxaAdm" placeholder="Valor da Taxa Administrativa">
+            </span>
+        </span>
+    </fieldset>
+    <span class="">
+        <input type="submit" class="btn-dark btn-lg btn-block" value="Cadastrar" />
+    </span>
+</form>
+<script src="~/Content/MaskMoney.min.js"></script>
+<script src="~/Content/CadastroTorneio.js"></script>

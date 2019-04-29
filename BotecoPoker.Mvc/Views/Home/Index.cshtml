@@ -1,0 +1,66 @@
+﻿@using BotecoPoker.Dominio.Entidades
+@model Caixa
+@{
+    string EscondeFechamento = "";
+    string EscondeAbertura = "";
+
+    if (Model == null)
+    {
+        EscondeFechamento = "hidden";
+    }
+    if (Model != null)
+    {
+        EscondeAbertura = "hidden";
+    }
+    var erro = (ViewBag?.erro == "" || ViewBag?.erro == null) ? "" : ViewBag.erro;
+    var classeErro = (erro == "" || erro == null) ? "" : "alert alert-danger";
+}
+
+<h1 align="center"><b>Bem Vindo!</b></h1>
+<br />
+<h2 align="center">Ao sistema de Gerenciamento do <b><big>Boteco do Poker</big></b></h2>
+<br />
+
+<div class="@classeErro" role="alert">
+    <center>@erro</center>
+</div>
+
+<center>
+    <a type="button" @EscondeAbertura class="btn btn-dark btn-lg wt80" href="@Url.Action("AbrirCaixa")">Iniciar Dia</a>
+</center>
+
+<br />
+@if (Model != null)
+{
+
+    <center>
+        <h3><b>Data hora de Abertura Caixa - Nº: @Model.Id</b></h3>
+        <h2>@Model.DataAbertura.ToLongDateString() às <big><b>@Model.DataAbertura.ToLongTimeString()</b></big></h2>
+    </center>
+
+    if (Model.Ativo == BotecoPoker.Dominio.Enumeradores.Ativo.Ativo)
+    {
+        <br />
+        <center>
+            @if (Model.ValorVenda > 0)
+            {
+                <h4>Valor de <b>Venda</b> = @((Model.ValorVenda ?? 0).ToString("c2"))</h4>
+            }
+            @if (Model.ValorCashGame > 0)
+            {
+                <h4>Valor do <b>CashGame</b> = @((Model.ValorCashGame ?? 0).ToString("c2"))</h4>
+            }
+            @foreach (var torneio in Model.ValorTorneios)
+            {
+                if (torneio.Value > 0)
+                {
+                    <h4>Valor do Torneio <b>@torneio.Key</b> = @torneio.Value.ToString("c2")</h4>
+                }
+            }
+        </center>
+    }
+}
+
+<center>
+    <a type="button" @EscondeFechamento class="btn btn-dark btn-lg wt80" href="@Url.Action("FecharCaixa")">Fechar Dia</a>
+</center>

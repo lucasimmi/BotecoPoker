@@ -1,0 +1,182 @@
+﻿@{
+    IEnumerable<SelectListItem> comboProdutos = ViewBag.ComboProdutos;
+    var nomeClienteSelecionado = Model?.PaginacaoCliente?.ListaModel?.FirstOrDefault()?.Nome ?? "";
+    var idClienteSelecionado = Model?.PaginacaoCliente?.ListaModel?.FirstOrDefault()?.Id ?? 0;
+    var saldoClienteSelecionado = Model?.PaginacaoCliente?.ListaModel?.FirstOrDefault()?.Saldo ?? 0;
+    var erro = (ViewBag?.erro == "" || ViewBag?.erro == null) ? "" : ViewBag.erro;
+    var classeErro = (erro == "" || erro == null) ? "" : "alert alert-danger";
+}
+@using BotecoPoker.Dominio.modelos
+@using BotecoPoker.Dominio.Entidades
+@model VendaModelo
+<div align="right">
+    <a type="button" class="btn btn-dark btn-lg direita" href="@Url.Action("FiltroVenda","Venda")">Voltar</a>
+</div>
+<form class="form-control-lg" method="post" action="@Url.Action("IncluirVenda","Venda")">
+
+    <h1 align="center">Incluir Venda</h1>
+    <div class="@classeErro" role="alert">
+        @erro
+    </div>
+    <fieldset class="form-control-lg">
+        <div class="form-row">
+            <div class="form-group col-lg-3">
+                <label for="sel1"><b>Produto</b></label>
+                <div class="form-control" id="Produto">
+                    @Html.DropDownList("IdProduto", comboProdutos)
+                </div>
+            </div>
+
+            <div class="col-md-1">
+                <label><b>Quantidade</b></label>
+                <input type="text" class="form-control" id="" name="Quantidade" placeholder="Qtd">
+            </div>
+            <div class="col-auto wt30" style="margin-top:3.1%;">
+                <button type="submit" class="btn btn-dark btn-lg wt100">Incluir</button>
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+<table class="table table-sm table-dark">
+    <thead class="">
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Valor</th>
+            <th scope="col">Quantidade</th>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.PreVendas)
+        {
+            <tr>
+                <td>@item.Produto.Nome</td>
+                <td>@item.Produto.Valor.ToString("c2")</td>
+                <td>@item.Quantidade</td>
+                <td><a class="btn-dark" href="@Url.Action("DeletarPreVenda", new { IdPreVenda = item.Id })">Deletar</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model?.PreVendas?.Count > 0)
+{
+<form action="@Url.Action("FinalizarVenda","Venda")" method="post">
+    <div class="wt100">
+        <div id="Troco2" class="form-row">
+            <h1 id="teste"></h1>
+            <div style="padding:15px;" id="TrocoSaldo" hidden>
+                <label>Deixar como Saldo: <input type="checkbox" name="TrocoSaldo" value="true" /></label>
+            </div>
+        </div>
+        @{string saldoCliente = "";
+            string valorAPagar = "";
+            if (saldoClienteSelecionado > 0)
+            {
+                saldoCliente = "Saldo Cliente: " + saldoClienteSelecionado.ToString("c2");
+                valorAPagar = "Valor à Pagar: " + (Model.ValorTotal.Value - saldoClienteSelecionado).ToString("c2");
+            }
+        }
+        <input hidden value="@Model.ValorTotal" id="ValorTotal" />
+        <h2 align="right" id="">Sub-total: @Model.ValorTotal.Value.ToString("c2")</h2>
+        <h4 align="right">@saldoCliente</h4>
+        <h4 align="right">@valorAPagar</h4>
+    </div>
+    <fieldset class="form-control-lg">
+        <div class="form-group">
+            <label for="sel1"><b>Cliente:</b></label>
+            <div class="input-group wt35">
+                <input hidden name="IdCliente" value="@idClienteSelecionado" />
+                <input type="tel" disabled class="form-control" name="NomeCliente" placeholder="Nome" value="@nomeClienteSelecionado">
+                <div class="input-group-append">
+                    <button class="btn btn-dark" type="button" id="ProcurarCliente" onclick="OpenModal()">Procurar</button>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-lg-3">
+                    <label for="sel1"><b>Valor Pago:</b></label>
+                    <input type="text" class="form-control" id="Dinheiro" name="ValorPago" onblur="CalculaTroco(@saldoClienteSelecionado)">
+                </div>
+                <div class="form-group col-lg-3">
+                    <label for="sel1"><b>Tipo Pagamento:</b></label>
+                    <select class="form-control" id="Pago" name="TipoFinalizador">
+                        <option value="1">Dinheiro</option>
+                        <option value="2">Cartão Débito</option>
+                        <option value="3">Cartão Crédito</option>
+                        <option value="4">Cheque</option>
+                        <option value="5">Cortezia</option>
+                        <option value="0">Conta</option>
+                    </select>
+                </div>
+            </div>
+            @if (idClienteSelecionado > 0 && nomeClienteSelecionado != "")
+            {
+                <div class="btn-block">
+                    <button class="btn btn-dark btn-block" type="submit">FinalizarVenda</button>
+                </div>
+            }
+        </div>
+    </fieldset>
+</form>
+        }
+        @{
+            <input hidden value="@ViewBag.OpenModal" id="abreModal">
+        }
+
+        <div class="modal fade bd-example-modal-lg" id="ModalBuscaCliente">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-body modal-content">
+                    <form method="post" action="@Url.Action("FiltrarClienteModal","Venda")">
+                        <fieldset>
+                            <div class="form-row">
+                                <div class="col-md-5">
+                                    <label class="" for="Nome"><b>Nome</b></label>
+                                    <input type="text" class="form-control" id="Nome" name="PaginacaoModel.Filtro.Nome" value="@Model.PaginacaoCliente.Parametro1" placeholder="Nome">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="" for="Nick"><b>Nick</b> (apelido)</label>
+                                    <input type="text" class="form-control" name="PaginacaoModel.Filtro.Apelido" id="Apelido" value="@Model.PaginacaoCliente.Parametro12" placeholder="Nick">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="" for="Codigo"><b>Código</b> (Código do dia)</label>
+                                    <input type="text" class="form-control" id="Codigo" name="PaginacaoModel.Filtro.Codigo" value="@Model.PaginacaoCliente.Parametro13" placeholder="Código">
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="btn-block">
+                            <button type="submit" class="btn btn-dark btn-lg wt100">Pesquisar</button>
+                        </div>
+                    </form>
+                    <table class="table table-sm table-dark">
+                        <thead class="">
+                            <tr>
+                                <th scope="col">Nome</th>
+                                <th scope="col">CPF</th>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.PaginacaoCliente.ListaModel)
+                            {
+                                <tr>
+                                    <td>@item.Nome</td>
+                                    <td>@item.CPF</td>
+                                    <td><a class="btn-dark" href="@Url.Action("SelecionarClienteVenda", new { idCliente = item.Id })">Selecionar</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            @foreach (var pagina in Model.PaginacaoCliente.QtdPaginas)
+                            {
+                                <li class="page-item"><a class="page-link @Model.PaginacaoCliente.PrintaPaginaSelecionada(pagina, Model.PaginacaoCliente.Pagina)" href="@Url.Action("FiltrarClienteModal", new PaginacaoModel<Cliente, FiltroCliente>(Model.PaginacaoCliente,pagina)) ">@pagina</a></li>
+                            }
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <script src="~/Content/MaskMoney.min.js"></script>
+        <script src="~/Content/IncluirVenda.js"></script>

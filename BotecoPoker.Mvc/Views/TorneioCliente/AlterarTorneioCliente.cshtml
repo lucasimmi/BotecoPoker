@@ -1,0 +1,58 @@
+﻿@using BotecoPoker.Dominio.Entidades
+@model TorneioCliente
+@{
+    var erro = (ViewBag?.erro == "" || ViewBag?.erro == null) ? "" : ViewBag.erro;
+    var classeErro = (erro == "" || erro == null) ? "" : "alert alert-danger";
+}
+<div align="right">
+    <a type="button" class="btn btn-dark btn-lg direita" href="@Url.Action("FiltroTorneioCliente","TorneioCliente")">Voltar</a>
+</div>
+<form class="form-control-lg" id="meuForm" method="post" action="@Url.Action("AlterarTorneioCliente","TorneioCliente")">
+    <h1 align="center">Cadastro de Cliente no Torneio</h1>
+    <div class="@classeErro" role="alert">
+        @erro
+    </div>
+    <fieldset class="form-control-lg">
+        <input hidden name="IdCliente" value="@Model.IdCliente" />
+        <input hidden name="DataCadastro" value="@Model.DataCadastro" />
+        <input hidden name="IdUsuarioCadastro" value="@Model.IdUsuarioCadastro" />
+        <input hidden name="IdTorneio" value="@Model.IdTorneio" />
+        <input hidden name="Id" value="@Model.Id" />
+
+        <div class="form-row">
+            <div class="form-group col-lg-6">
+                <label for="sel1"><b>Cliente</b></label>
+                <div class="input-group mb-3">
+                    <input type="tel" disabled class="form-control" placeholder="Nome" value="@Model.NomeCliente">
+                </div>
+            </div>
+            <div class="form-group col-lg-3">
+                <label for="sel1"><b>Bonus Beneficente</b></label>
+                <input type="text" class="form-control" name="BonusBeneficente" placeholder="Bonus Beneficente" value="@Model.BonusBeneficente">
+            </div>
+            <div class="form-group col-lg-3">
+                <label for="sel1"><b>Buy-In</b></label>
+                <input type="number" class="form-control" name="BuyIn" placeholder="Buy-In" value="@Model.BuyIn">
+            </div>
+            <div class="form-group col-lg-3">
+                <label for="sel1"><b>Re-Buy</b></label>
+                <input type="number" class="form-control" name="ReBuy" placeholder="Re-Buy" value="@Model.ReBuy">
+            </div>
+            <div class="form-group col-lg-3">
+                <label for="sel1"><b>Addon</b></label>
+                <input type="number" class="form-control" name="Addon" placeholder="Addon" value="@Model.Addon">
+            </div>
+            <div class="form-group col-lg-3">
+                <label for="sel1"><b>JackPot</b></label>
+                <input type="number" class="form-control" name="JackPot" placeholder="JackPot" value="@Model.JackPot">
+            </div>
+            <div class="form-group col-lg-3">
+                <label for="sel1"><b>TaxaAdm</b></label>
+                <input type="number" class="form-control" name="TaxaAdm" placeholder="TaxaAdm" value="@Model.TaxaAdm">
+            </div>
+        </div>
+    </fieldset>
+    <span class="">
+        <input type="submit" class="btn-dark btn-lg btn-block" value="Alterar" />
+    </span>
+</form>

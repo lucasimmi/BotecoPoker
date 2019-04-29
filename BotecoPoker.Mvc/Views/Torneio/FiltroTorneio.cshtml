@@ -1,0 +1,65 @@
+﻿@using BotecoPoker.Dominio.Entidades
+@using BotecoPoker.Dominio.modelos
+@using BotecoPoker.Dominio.Enumeradores
+@model PaginacaoModel<Torneio, FiltroTorneio>
+<a type="button" class="btn btn-dark btn-lg" href="@Url.Action("CadastroTorneio","Torneio")">Cadastrar Torneio</a>
+<form class="form-control-lg">
+    <h1 align="center">Pesquisa de Torneios</h1>
+
+    <fieldset class="form-control-lg">
+        <div class="form-row">
+            <div class="col-md-5">
+                <label class="" for="Nome"><b>Nome</b></label>
+                <input type="text" class="form-control" id="Nome" placeholder="Nome do Torneio" name="PaginacaoModel.Filtro.Nome" value="@Model.Parametro1">
+            </div>
+        </div>
+    </fieldset>
+    <div class="btn-block">
+        <button type="submit" class="btn btn-dark btn-lg wt100">Pesquisar</button>
+    </div>
+    <span>
+    </span>
+</form>
+
+<br />
+<table class="table table-sm table-dark">
+    <thead class="">
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">BuyIn</th>
+            <th scope="col">ReBuy</th>
+            <th scope="col">Addon</th>
+            <th scope="col">TaxaAdm</th>
+            <th scope="col">JackPot</th>
+            <th scope="col">Situacao</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+
+        }
+        @foreach (var item in Model.ListaModel)
+        {
+            var situacao = item.Ativo == Ativo.Inativo ? "Inativo" : "Ativo";
+            <tr>
+                <td>@item.Nome</td>
+                <td>@item.FormatarValor(item.BuyIn)</td>
+                <td>@item.FormatarValor(item.ReBuy)</td>
+                <td>@item.FormatarValor(item.Addon)</td>
+                <td>@item.FormatarValor(item.TaxaAdm)</td>
+                <td>@item.FormatarValor(item.JackPot)</td>
+                <td>@situacao</td>
+                <td><a class="btn-dark" href="@Url.Action("ObterTorneio", new { idTorneio = item.Id })">Alterar</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        @foreach (int pagina in Model.QtdPaginas)
+        {
+            <li class="page-item"><a class="page-link @Model.PrintaPaginaSelecionada(pagina, Model.Pagina)" href="@Url.Action("FiltroTorneio", new PaginacaoModel<Torneio, FiltroTorneio>(Model, pagina))">@pagina</a></li>
+        }
+    </ul>
+</nav>

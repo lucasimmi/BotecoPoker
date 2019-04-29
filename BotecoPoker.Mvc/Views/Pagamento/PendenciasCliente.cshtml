@@ -1,0 +1,397 @@
+﻿@using BotecoPoker.Dominio.Entidades
+@using BotecoPoker.Dominio.modelos
+@model PendenciasCliente
+@{
+    var erro = (ViewBag?.erro == "" || ViewBag?.erro == null) ? "" : ViewBag.erro;
+    var classeErro = (erro == "" || erro == null) ? "" : "alert alert-danger";
+
+    PendenciasCliente pendenciasCliente = ViewBag?.DetalhesPagamento;
+    string abreModal = "";
+    if (pendenciasCliente != null)
+    {
+        abreModal = "666";
+    }
+}
+<form class="form-control-lg" action="@Url.Action("FiltroPagamentos","Pagamento")" method="get">
+    <h1 align="center">Pendências Cliente</h1>
+
+    <div class="@classeErro" role="alert">
+        @erro
+    </div>
+    <fieldset class="form-control-lg">
+        <div class="form-row">
+            <div class="col-md-5">
+                <label class="" for="Nome"><b>Nome:</b></label>
+                <input disabled type="text" class="form-control" value="@Model.NomeCliente">
+            </div>
+            <a>&emsp;&emsp;&emsp;</a>
+            <div>
+                @if (Model.Saldo > 0)
+                {
+                    <label class="" for="Nome"><b>Saldo Cliente:</b></label>
+                    <h1 align="left">@((Model.Saldo ?? 0).ToString("c2"))</h1>
+                }
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+@if (Model.Pagamentos.Count > 0)
+{
+    foreach (var pagamento in Model.Pagamentos)
+    {
+        <center><h3>Comanda em aberto</h3></center>
+        <table class="table table-sm table-dark">
+            <thead class="">
+                <tr>
+                    <th scope="col">Data Pagamento</th>
+                    <th scope="col">Valor Total</th>
+                    <th scope="col">Valor em Aberto</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@pagamento.Data</td>
+                    <td>@pagamento.ValorTotal.ToString("c2")</td>
+                    <td>@pagamento.ValorAberto.ToString("c2")</td>
+                    <td><a class="btn-dark" href="@Url.Action("DetalhesComprovanteAberto", new { idPagamento = pagamento.Id })">Detalhes</a></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <form action="@Url.Action("GerarPagamento","Pagamento")" method="post">
+            <div id="Troco" class="form-row">
+                <h1 id="teste"></h1>
+                <div style="padding:15px;" id="TrocoSaldo" hidden>
+                    <label>Deixar como Saldo: <input type="checkbox" name="TrocoSaldo" value="true" /></label>
+                </div>
+            </div>
+
+            <input hidden id="ValorTotal" value="@pagamento.ValorAberto" />
+
+
+            <input hidden name="IdCliente" value="@Model.IdCliente" />
+            <input hidden name="IdPagamento" value="@pagamento.Id" />
+            <input hidden id="Saldo" name="Saldo" value="@Model.Saldo" />
+
+            <div class="form-row" align="center">
+                <div class="col-md-2">
+                    <label class="" for="ValorPago"><b>Valor</b></label>
+                    <input type="text" id="Dinheiro" class="form-control" name="ValorPago" onblur="CalculaTroco(@(Model.Saldo ?? 0))">
+                </div>
+                <div class="form-group col-lg-3">
+                    <label for="sel1"><b>Tipo Pagamento</b></label>
+                    <select class="form-control" id="Pago" name="TipoFinalizador">
+                        <option value="1">Dinheiro</option>
+                        <option value="2">Cartão Débito</option>
+                        <option value="3">Cartão Crédito</option>
+                        <option value="4">Cheque</option>
+                        <option value="5">Cortezia</option>
+                        <option value="0">Conta</option>
+                    </select>
+                </div>
+                @*@if (Model.Saldo > 0)
+                        {
+                    <div class="form-group col-lg-1" >
+                        <br />
+                        <label>Usar Saldo: <input type="checkbox" name="UtilizarSaldo" value="true" /></label>
+                    </div>
+                        }*@
+                <div class="col-md-4" style="">
+                    <label class="" for="ValorPago"></label>
+                    <button type="submit" class="btn btn-dark btn-lg wt100">Pagar Comanda</button>
+                </div>
+            </div>
+        </form>
+        <br />
+    }
+}
+
+@if (Model.Vendas.Count > 0)
+{
+    <h2 align="center">Bar</h2>
+    <table class="table table-sm table-dark">
+        <thead class="">
+            <tr>
+                <th scope="col">Data Venda</th>
+                <th scope="col">Sub-Total</th>
+                <th scope="col">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Vendas)
+            {
+                <tr>
+                    <td><b>@item.DataVenda</b></td>
+                    <td></td>
+                    <td><b>@item.Valor.ToString("c2")</b></td>
+                </tr>
+                foreach (var preVenda in item.PreVendas)
+                {
+                    var total = preVenda.Quantidade * preVenda.Produto.Valor;
+                    <tr>
+                        <td>@preVenda.Produto.Nome - @preVenda.Quantidade  Unidade - @preVenda.Produto.Valor.ToString("c2")</td>
+                        <td>@total.ToString("c2")</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+@if (Model.TorneiosCliente.Count > 0)
+{
+    <h2 align="center">Torneio</h2>
+    <table class="table table-sm table-dark">
+        <thead class="">
+            <tr>
+                <th scope="col">Data Torneio</th>
+                <th scope="col">Nome do Torneio</th>
+                <th scope="col">Sub-Total</th>
+                <th scope="col">Total</th>
+                <th scope="col">Pago</th>
+                <th scope="col">Valor à Pagar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.TorneiosCliente)
+            {
+                var valorAPagar = item.ValorTotal.ToString("c2");
+                var valorPago = "";
+                if (item.ValorPago > 0)
+                {
+                    valorPago = ((double)item.ValorPago).ToString("c2");
+                    valorAPagar = (item.ValorTotal - (double)item.ValorPago).ToString("c2");
+                }
+                <tr>
+                    <td><b>@item.DataCadastro</b></td>
+                    <td><b>@item.NomeTorneio</b></td>
+                    <td>&emsp;</td>
+                    <td>@item.ValorTotal.ToString("c2")</td>
+                    <td>@valorPago</td>
+                    <td>@valorAPagar</td>
+                </tr>
+                foreach (var itemTorneio in item.ItensTorneio)
+                {
+                    var valor = itemTorneio.ValorItem;
+                    if (itemTorneio.ValorItem != "Alimento")
+                    {
+                        var valorItem = itemTorneio.ValorItem.Replace("R$", "");
+                        valor = (Convert.ToDouble(valorItem) * itemTorneio.QtdItem).ToString("c2");
+                    }
+                    <tr>
+                        <td>@itemTorneio.NomeItem - @itemTorneio.QtdItem Unidade - @itemTorneio.ValorItem</td>
+                        <td>&emsp;</td>
+                        <td>@valor</td>
+                        <td>&emsp;</td>
+                        <td>&emsp;</td>
+                        <td>&emsp;</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+@if (Model.CashGames.Count > 0)
+{
+    <h2 align="center">Cash Game</h2>
+    <table class="table table-sm table-dark">
+        <thead class="">
+            <tr>
+                <th scope="col">Data Compra</th>
+                <th scope="col">Valor Cash</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.CashGames)
+            {
+                <tr>
+                    <td>@item.DataCadastro</td>
+                    <td>@item.Valor.ToString("c2")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<input hidden value="@Model.ValorTotal" id="ValorTotal2" />
+@*<input type="text" disabled value="" id="Troco" />*@
+
+
+
+
+
+@if (Model.CashGames.Count > 0 || Model.TorneiosCliente.Count > 0 || Model.Vendas.Count > 0)
+{
+    //var mostraValorTotal = Model.CashGames.Count > 0 ? 1 : 0;
+    //mostraValorTotal += Model.TorneiosCliente.Count > 0 ? 1 : 0;
+    //mostraValorTotal += Model.Vendas.Count > 0 ? 1 : 0;
+    //if (mostraValorTotal >= 2)
+    //{
+    <h3 align="right">Valor Total: @Model.ValorTotal.ToString("c2")</h3>
+    //}
+<form action="@Url.Action("GerarPagamento","Pagamento")" method="post">
+
+    <div id="Troco2" class="form-row">
+        <h1 id="teste2"></h1>
+        <div style="padding:15px;" id="TrocoSaldo2" hidden>
+            <label>Deixar como Saldo: <input type="checkbox" name="TrocoSaldo" value="true" /></label>
+        </div>
+    </div>
+
+    <input hidden name="IdCliente" value="@Model.IdCliente" />
+    <div class="form-row" align="center">
+        <div class="col-md-2">
+            <label class="" for="ValorPago"><b>Valor</b></label>
+            <input name="Saldo" value="@Model.Saldo" hidden />
+            <input type="text" id="Dinheiro2" class="form-control" name="ValorPago" onblur="CalculaTroco2(@(Model.Saldo ?? 0))">
+        </div>
+        <div class="form-group col-lg-3">
+            <label for="sel1"><b>Tipo Pagamento</b></label>
+            <select class="form-control" id="Pago" name="TipoFinalizador">
+                <option value="1">Dinheiro</option>
+                <option value="2">Cartão Débito</option>
+                <option value="3">Cartão Crédito</option>
+                <option value="4">Cheque</option>
+                <option value="5">Cortezia</option>
+                <option value="0">Conta</option>
+            </select>
+        </div>
+        <div class="col-md-4" style="">
+            <label class="" for="ValorPago"></label>
+            <button type="submit" class="btn btn-dark btn-lg wt100">Efetuar Pagamento</button>
+        </div>
+    </div>
+</form>
+}
+<script src="~/Content/MaskMoney.min.js"></script>
+<script src="~/Content/PendenciaCliente.js"></script>
+
+<input hidden id="abreModal" value="@abreModal" />
+@if (pendenciasCliente != null)
+{
+    <div class="modal fade bd-example-modal-lg" id="ModalComprovante">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body modal-content">
+
+                @if (pendenciasCliente.Vendas.Count > 0)
+                {
+                    <h2 align="center">Bar</h2>
+                    <table class="table table-sm table-dark">
+                        <thead class="">
+                            <tr>
+                                <th scope="col">Data Venda</th>
+                                <th scope="col">Sub-Total</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in pendenciasCliente.Vendas)
+                            {
+                                <tr>
+                                    <td><b>@item.DataVenda</b></td>
+                                    <td></td>
+                                    <td><b>@item.Valor.ToString("c2")</b></td>
+                                </tr>
+                                foreach (var preVenda in item.PreVendas)
+                                {
+                                    var total = preVenda.Quantidade * preVenda.Produto.Valor;
+                                    <tr>
+                                        <td>@preVenda.Produto.Nome - @preVenda.Quantidade  Unidade - @preVenda.Produto.Valor.ToString("c2")</td>
+                                        <td>@total.ToString("c2")</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+                @if (pendenciasCliente.TorneiosCliente.Count > 0)
+                {
+                    <h2 align="center">Torneio</h2>
+                    <table class="table table-sm table-dark">
+                        <thead class="">
+                            <tr>
+                                <th scope="col">Data Torneio</th>
+                                <th scope="col">Nome do Torneio</th>
+                                <th scope="col">Sub-Total</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in pendenciasCliente.TorneiosCliente)
+                            {
+                                <tr>
+                                    <td><b>@item.DataCadastro</b></td>
+                                    <td><b>@item.NomeTorneio</b></td>
+                                    <td></td>
+                                    <td>@item.ValorTotal.ToString("c2")</td>
+                                </tr>
+                                foreach (var itemTorneio in item.ItensTorneio)
+                                {
+                                    var valor = itemTorneio.ValorItem;
+                                    if (itemTorneio.ValorItem != "Alimento")
+                                    {
+                                        var valorItem = itemTorneio.ValorItem.Replace("R$", "");
+                                        valor = (Convert.ToDouble(valorItem) * itemTorneio.QtdItem).ToString("c2");
+                                    }
+
+                                    <tr>
+                                        <td>@itemTorneio.NomeItem - @itemTorneio.QtdItem Unidade - @valor</td>
+                                        <td></td>
+                                        <td>@valor</td>
+                                        <td></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+                @if (pendenciasCliente.CashGames.Count > 0)
+                {
+                    <h2 align="center">Cash Game</h2>
+                    <table class="table table-sm table-dark">
+                        <thead class="">
+                            <tr>
+                                <th scope="col">Data Compra</th>
+                                <th scope="col">Valor Cash</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in pendenciasCliente.CashGames)
+                            {
+                                <tr>
+                                    <td>@item.DataCadastro</td>
+                                    <td>@item.Valor.ToString("c2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                @if (pendenciasCliente.Parcelamentos.Count > 0)
+                {
+                    <h2 align="center">Parcelas Pagas</h2>
+                    <table class="table table-sm table-dark">
+                        <thead class="">
+                            <tr>
+                                <th scope="col">Data Pagamento</th>
+                                <th scope="col">Valor Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in pendenciasCliente.Parcelamentos)
+                            {
+                                <tr>
+                                    <td>@item.DataPagamento</td>
+                                    <td>@item.ValorPago.ToString("c2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+    <script src="~/Content/Comprovante.js"></script>
+}

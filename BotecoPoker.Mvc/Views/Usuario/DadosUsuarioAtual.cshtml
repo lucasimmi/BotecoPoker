@@ -1,0 +1,41 @@
+﻿@{
+    var erros = (ViewBag?.erros == "" || ViewBag?.erros == null) ? "" : ViewBag.erros;
+    var classeErro = (erros == "" || erros == null) ? "" : "alert alert-danger";
+}
+@using BotecoPoker.Dominio.Entidades
+@model Usuario
+
+<form class="form-control-lg" action="@Url.Action("Alterar","Usuario")" , method="post">
+    <h1 align="center">Altere aqui seus Dados</h1>
+    <div class="@classeErro" role="alert">
+        @erros
+    </div>
+    <fieldset class="form-control-lg">
+        <input hidden name="Id" value="@Model.Id" /> 
+        <div class="form-row">
+            <div class="col-md-6">
+                <label class="" for="Nome"><b>Nome</b></label>
+                <input type="text" class="form-control" id="Nome" name="Nome" placeholder="Nome" value="@Model.Nome">
+            </div>
+            <div class="col-md-6">
+                <label class="" for="Nick"><b>Login</b></label>
+                <input type="text" class="form-control" name="Login" id="Login" placeholder="Login" value="@Model.Login">
+            </div>
+            <div class="col-md-6">
+                <label class="" for="Senha"><b>Nova Senha</b></label>
+                <input type="password" class="form-control" id="Senha" name="NovaSenha" placeholder="Senha" value="">
+            </div>
+            <div class="col-md-6">
+                <label class="" for="Senha"><b>Digite novamente a nova Senha</b></label>
+                <input type="password" class="form-control" id="Senha" name="ConfimaNovaSenha" placeholder="Senha" value="">
+            </div>
+            <div class="col-md-6">
+                <label class="" for="Senha"><b>Senha Atual</b></label>
+                <input type="password" class="form-control" id="Senha" name="Senha" placeholder="Senha" value="">
+            </div>
+        </div>
+    </fieldset>
+    <div class="btn-block">
+        <button type="submit" class="btn btn-dark btn-lg wt100">Alterar</button>
+    </div>
+</form>

@@ -1,0 +1,134 @@
+﻿@using BotecoPoker.Aplicacao.Servicos
+@using Ninject;
+@{
+    var usuario = AutenticacaoAplicacao.ObterUsuarioLogado();
+    string NomeUsuario = string.Empty;
+    if (usuario != null)
+    {
+        NomeUsuario = usuario.Nome;
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="" />
+    <title class="">Boteco do Poker</title>
+    @Styles.Render("~/Content/vendor/bootstrap/css/bootstrap.min.css")
+    @Styles.Render("~/Content/vendor/font-awesome/css/font-awesome.min.css")
+    @Styles.Render("~/Content/css/sb-admin.css")
+
+    @Scripts.Render("~/Content/vendor/jquery/jquery.min.js")
+    @Scripts.Render("~/Content/vendor/bootstrap/js/bootstrap.bundle.min.js")
+
+    @*@Scripts.Render("~/Content/js/sb-admin.min.js")*@
+    @*@Scripts.Render("~/Scripts/jquery.mask.js")*@
+    @*@Scripts.Render("~/Content/MaskMoney.min.js");*@
+</head>
+<body class="fixed-nav sticky-footer bg-dark" id="page-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+        <a class="navbar-brand" href="@Url.Action("TelaInicial","Home")">Boteco do Poker</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
+                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Bar">
+                    <a class="nav-link" href="@Url.Action("FiltroVenda","Venda")">
+                        <i class="fa fa-coffee"></i>
+                        <span class="nav-link-text">Bar</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Torneio">
+                    <a class="nav-link" href="@Url.Action("FiltroTorneioCliente","TorneioCliente")">
+                        <i class="fa fa-trophy"></i>
+                        <span class="nav-link-text">Torneio</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Cash Game">
+                    <a class="nav-link" href="@Url.Action("FiltroCashGame", "CashGame")">
+                        <i class="fa fa-money"></i>
+                        <span class="nav-link-text">Cash Game</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Pagamentos">
+                    <a class="nav-link" href="@Url.Action("FiltroPagamentos", "Pagamento")">
+                        <i class="fa fa-credit-card"></i>
+                        <span class="nav-link-text">Pagamentos</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Comprovantes">
+                    <a class="nav-link" href="@Url.Action("ComprovantePagamentos", "Pagamento")">
+                        <i class="fa fa-wpforms"></i>
+                        <span class="nav-link-text">Comprovantes</span>
+                    </a>
+                </li>
+
+                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Cadastros">
+                    <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseExamplePages" data-parent="#exampleAccordion">
+                        <i class="fa fa-fw fa-file"></i>
+                        <span class="nav-link-text">Cadastros</span>
+                    </a>
+                    <ul class="sidenav-second-level collapse" id="collapseExamplePages">
+                        <li>
+                            <a href="@Url.Action("FiltroCliente","Cliente")">Clientes</a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("FiltroProduto","Produto")">Produtos</a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("FiltroTorneio","Torneio")">Torneios</a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index","Usuario")">Usuários</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="navbar-nav sidenav-toggler">
+                <li class="nav-item">
+                    <a class="nav-link text-center" id="sidenavToggler">
+                        <i class="fa fa-fw fa-angle-left"></i>
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="" data-toggle="tooltip" href="@Url.Action("DadosUsuarioAtual","Usuario")">
+                        <big><b class="text-white">@NomeUsuario</b></big>
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav order-md-last ">
+                <li class="nav-item">
+
+                    <a href="@Url.Action("Logout","Login")" class="nav-link" data-target="#exampleModal">
+                        <i class="fa fa-fw fa-sign-out"></i>Sair
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            @RenderBody()
+        </div>
+
+        <footer class="sticky-footer">
+            <div class="container">
+                <div class="text-center">
+                    <small algn="center">@DateTime.Now.ToLongDateString() </small>
+                </div>
+            </div>
+        </footer>
+
+        <a class="scroll-to-top rounded" href="#page-top">
+            <i class="fa fa-angle-up"></i>
+        </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,125 @@
+﻿@using BotecoPoker.Dominio.Entidades
+@using BotecoPoker.Dominio.modelos
+@using BotecoPoker.Dominio.Enumeradores
+@model PaginacaoModel2<CashGame, Cliente, FiltroCliente>
+@{
+    var erro = (ViewBag?.erro == "" || ViewBag?.erro == null) ? "" : ViewBag.erro;
+    var classeErro = (erro == "" || erro == null) ? "" : "alert alert-danger";
+    var nomeCliente = Model?.ListaModel2?.FirstOrDefault()?.Nome ?? "";
+    var idCliente = Model?.ListaModel2?.FirstOrDefault()?.Id ?? 0;
+    var valor = Model?.ListaModel?.FirstOrDefault()?.Valor ?? 0;
+    var pago = (Model?.ListaModel?.FirstOrDefault()?.Situacao == SituacaoVenda.Pago) ? "selected" : "";
+    var pendente = (Model?.ListaModel?.FirstOrDefault()?.Situacao == SituacaoVenda.Pendente) ? "selected" : "";
+    var dataCadastro = Model?.ListaModel?.FirstOrDefault()?.DataCadastro ?? null;
+    var idUsuarioCadastro = Model?.ListaModel?.FirstOrDefault()?.IdUsuarioCadastro ?? 0;
+    var id = Model?.ListaModel?.FirstOrDefault()?.Id ?? 0;
+
+}
+@{
+    <input hidden value="@ViewBag.OpenModal" id="abreModal">
+}
+<div align="right">
+    <a type="button" class="btn btn-dark btn-lg" href="@Url.Action("FiltroCashGame","CashGame")">Voltar</a>
+</div>
+<form class="form-control-lg" action="@Url.Action("CadastroCashGame","CashGame")" method="post">
+
+    <input hidden name="DataCadastro" value="@dataCadastro" />
+    <input hidden name="IdUsuarioCadastro" value="@idUsuarioCadastro" />
+    <input hidden name="Id" value="@id" />
+    <input hidden name="NomeCliente" value="@nomeCliente" />
+
+    <h1 align="center">Cadastro de Cash Game</h1>
+    <div class="@classeErro" role="alert">
+        @erro
+    </div>
+    <fieldset class="form-control-lg">
+        <span class="form-row">
+
+            <span class="form-group col-lg-6">
+                <label for="sel1"><b>Cliente</b></label>
+                <span class="input-group mb-3">
+                    <input hidden name="IdCliente" value="@idCliente" />
+                    <input type="text" disabled class="form-control" name="NomeCliente" placeholder="Nome" value="@nomeCliente">
+                    <span class="input-group-append">
+                        <button class="btn btn-dark" type="button" id="ProcurarCliente" onclick="OpenModal()">Procurar</button>
+                    </span>
+                </span>
+            </span>
+
+            <span class="form-group col-md-3">
+                <label for="Valor"><b>Valor</b></label>
+                <input type="tel" class="form-control" id="Valor" name="Valor" placeholder="Valor" required value="@valor">
+            </span>
+
+            <span class="form-group col-lg-3">
+                <label for="sel1"><b>Situação</b></label>
+                <select class="form-control" id="Pago" name="Situacao">
+                    <option value="0" @pendente>Pendente</option>
+                    <option value="1" @pago>Pago</option>
+                </select>
+            </span>
+
+        </span>
+    </fieldset>
+    <span class="">
+        <input type="submit" class="btn-dark btn-lg btn-block" value="Cadastrar" />
+    </span>
+</form>
+
+
+
+<div class="modal fade bd-example-modal-lg" id="ModalBuscaCliente">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body modal-content">
+            <form method="post" action="@Url.Action("FiltrarClienteModal","CashGame")">
+                <fieldset>
+                    <div class="form-row">
+                        <div class="col-md-5">
+                            <label class="" for="Nome"><b>Nome</b></label>
+                            <input type="text" class="form-control" id="Nome" name="paginacao.Filtro.Nome" placeholder="Nome" value="@Model.Parametro1">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="" for="Nick"><b>Nick</b> (apelido)</label>
+                            <input type="text" class="form-control" id="Apelido" name="paginacao.Filtro.Apelido" placeholder="Nick" value="@Model.Parametro12">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="" for="Codigo"><b>Código</b> (Código do dia)</label>
+                            <input type="text" class="form-control" id="Codigo" name="paginacao.Filtro.Codigo" placeholder="Código" value="@Model.Parametro13">
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="btn-block">
+                    <button type="submit" class="btn btn-dark btn-lg wt100">Pesquisar</button>
+                </div>
+            </form>
+            <table class="table table-sm table-dark">
+                <thead class="">
+                    <tr>
+                        <th scope="col">Nome</th>
+                        <th scope="col">CPF</th>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ListaModel2)
+                    {
+                        <tr>
+                            <td>@item.Nome</td>
+                            <td>@item.CPF</td>
+                            <td><a class="btn-dark" href="@Url.Action("SelecionarCliente", new { idCliente = item.Id })">Selecionar</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    @foreach (var pagina in Model.QtdPaginas)
+                    {
+                        <li class="page-item"><a class="page-link  @Model.PrintaPaginaSelecionada(pagina, Model.Pagina)" href="@Url.Action("FiltrarClienteModal",  new PaginacaoModel2<CashGame,Cliente, FiltroCliente>(Model,pagina))">@pagina</a></li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+<script src="~/Content/CadastroCashGame.js"></script>

@@ -1,0 +1,208 @@
+﻿@using BotecoPoker.Dominio.Entidades
+@using BotecoPoker.Dominio.modelos
+@model PaginacaoModel<Pagamento, FiltroPagamento>
+@{
+    PendenciasCliente pendenciasCliente = ViewBag?.DetalhesPagamento;
+    string abreModal = "";
+    if (pendenciasCliente != null)
+    {
+        abreModal = "666";
+    }
+}
+<form class="form-control-lg" action="@Url.Action("ComprovantePagamentos", "Pagamento")" method="get">
+    <h1 align="center">Pesquisa de Comprovantes de Pagamentos</h1>
+    <fieldset class="form-control-lg">
+        <div class="form-row">
+            <div class="col-md-4">
+                <label class="" for="Nome"><b>Nome</b></label>
+                <input type="text" class="form-control" id="Nome" name="PaginacaoModel.Filtro.NomeCliente" placeholder="Nome" value="@Model.Parametro1">
+            </div>
+            <div class="col-md-3">
+                <label class="" for="Nick"><b>Nick</b></label>
+                <input type="text" class="form-control" name="PaginacaoModel.Filtro.ApelidoCliente" id="Apelido" placeholder="Apelido" value="@Model.Parametro13">
+            </div>
+            <div class="col-md-3">
+                <label class="" for="Data"><b>Data do Pagamento</b></label>
+                        <input type="date" data-date-format="DD-MM-YYYY" class="form-control" id="DataPagamento" name="PaginacaoModel.Filtro.DataPagamento" placeholder="Data do pagamento" value="@(Model.Parametro4.HasValue ? Model.Parametro4.Value.ToString("yyyy-MM-dd") : null)">
+            </div>
+            @{ 
+                string checada = Model.Filtro.Tudo == true ? "checked" : "";
+            }
+            <div class="checkbox" style="margin-top:3.6%; padding:5px;">
+                <label><input type="checkbox" @checada value="true" name="PaginacaoModel.Filtro.Tudo">Filtrar Tudo</label>
+            </div>
+        </div>
+    </fieldset>
+    <div class="btn-block">
+        <button type="submit" class="btn btn-dark btn-lg wt100">Pesquisar</button>
+    </div>
+</form>
+<br />
+<table class="table table-sm table-dark">
+    <thead class="">
+        <tr>
+            <th scope="col">Nome Cliente</th>
+            <th scope="col">Valor Pagamento</th>
+            <th scope="col">Data Pagamento</th>
+            <th scope="col">Detalhes Pagamento</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListaModel)
+        {
+            <tr>
+                <td>@item.Cliente.Nome</td>
+                <td>@item.ValorTotal.ToString("c2")</td>
+                <td>@item.Data.ToShortDateString()</td>
+                <td><a class="btn-dark" href="@Url.Action("DetalhesComprovante", new { idPagamento = item.Id })">Detalhes</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<input hidden value="@Model.Pagina" id="pagina" />
+@{
+    Model.Parametro1 = Model.Filtro.NomeCliente;
+    Model.Parametro12 = Model.Filtro.CodigoCliente;
+    Model.Parametro4 = Model.Filtro.DataPagamento;
+    Model.ParameterBool = Model.Filtro.Tudo;
+}
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        @foreach (int pagina in Model.QtdPaginas)
+        {
+            <li class="page-item"><a class="page-link @Model.PrintaPaginaSelecionada(pagina, Model.Pagina)" href="@Url.Action("ComprovantePagamentos", new PaginacaoModel<Pagamento, FiltroPagamento>(Model, pagina))">@pagina</a></li>
+        }
+    </ul>
+</nav>
+
+<input hidden id="abreModal" value="@abreModal" />
+@if (pendenciasCliente != null)
+{
+    <div class="modal fade bd-example-modal-lg" id="ModalComprovante">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body modal-content">
+
+                @if (pendenciasCliente.Vendas.Count > 0)
+                {
+                    <h2 align="center">Bar</h2>
+                    <table class="table table-sm table-dark">
+                        <thead class="">
+                            <tr>
+                                <th scope="col">Data Venda</th>
+                                <th scope="col">Sub-Total</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in pendenciasCliente.Vendas)
+                            {
+                                <tr>
+                                    <td><b>@item.DataVenda</b></td>
+                                    <td></td>
+                                    <td><b>@item.Valor.ToString("c2")</b></td>
+                                </tr>
+                                foreach (var preVenda in item.PreVendas)
+                                {
+                                    var total = preVenda.Quantidade * preVenda.Produto.Valor;
+                                    <tr>
+                                        <td>@preVenda.Produto.Nome - @preVenda.Quantidade  Unidade - @preVenda.Produto.Valor.ToString("c2")</td>
+                                        <td>@total.ToString("c2")</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+                @if (pendenciasCliente.TorneiosCliente.Count > 0)
+                {
+                    <h2 align="center">Torneio</h2>
+                    <table class="table table-sm table-dark">
+                        <thead class="">
+                            <tr>
+                                <th scope="col">Data Torneio</th>
+                                <th scope="col">Nome do Torneio</th>
+                                <th scope="col">Sub-Total</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in pendenciasCliente.TorneiosCliente)
+                            {
+                                <tr>
+                                    <td><b>@item.DataCadastro</b></td>
+                                    <td><b>@item.NomeTorneio</b></td>
+                                    <td></td>
+                                    <td>@item.ValorTotal.ToString("c2")</td>
+                                </tr>
+                                foreach (var itemTorneio in item.ItensTorneio)
+                                {
+                                    var valor = itemTorneio.ValorItem;
+                                    if (itemTorneio.ValorItem != "Alimento")
+                                    {
+                                        var valorItem = itemTorneio.ValorItem.Replace("R$", "");
+                                        valor = (Convert.ToDouble(valorItem) * itemTorneio.QtdItem).ToString("c2");
+                                    }
+
+                                    <tr>
+                                        <td>@itemTorneio.NomeItem - @itemTorneio.QtdItem Unidade - @valor</td>
+                                        <td></td>
+                                        <td>@valor</td>
+                                        <td></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+                @if (pendenciasCliente.CashGames.Count > 0)
+                {
+                    <h2 align="center">Cash Game</h2>
+                    <table class="table table-sm table-dark">
+                        <thead class="">
+                            <tr>
+                                <th scope="col">Data Compra</th>
+                                <th scope="col">Valor Cash</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in pendenciasCliente.CashGames)
+                            {
+                                <tr>
+                                    <td>@item.DataCadastro</td>
+                                    <td>@item.Valor.ToString("c2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+                @if (pendenciasCliente.Parcelamentos.Count > 0)
+                {
+                    <h2 align="center">Parcelas Pagas</h2>
+                    <table class="table table-sm table-dark">
+                        <thead class="">
+                            <tr>
+                                <th scope="col">Data Pagamento</th>
+                                <th scope="col">Valor Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in pendenciasCliente.Parcelamentos)
+                            {
+                                <tr>
+                                    <td>@item.DataPagamento</td>
+                                    <td>@item.ValorPago.ToString("c2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+    <script src="~/Content/Comprovante.js"></script>
+}

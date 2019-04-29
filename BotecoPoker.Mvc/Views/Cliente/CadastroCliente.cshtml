@@ -1,0 +1,93 @@
+﻿@model Cliente
+@using BotecoPoker.Dominio.Entidades
+@{
+    var erro = (ViewBag?.erro == "" || ViewBag?.erro == null) ? "" : ViewBag.erro;
+    var classeErro = (erro == "" || erro == null) ? "" : "alert alert-danger";
+}
+<div align="right">
+    <a type="button" class="btn btn-dark btn-lg" href="@Url.Action("FiltroCliente","Cliente")">Voltar</a>
+</div>
+<form class="form-control-lg" id="idForm" method="post">
+
+    <h1 align="center">Cadastro de Cliente</h1>
+    <div class="@classeErro" role="alert">
+        @erro
+    </div>
+    <fieldset class="form-control-lg">
+
+        <span class="form-row">
+            <span class="form-group col-md-6">
+                <label for="Nome" class=""><b>Nome</b></label>
+                <input type="text" name="Nome" class="form-control" placeholder="Nome Completo" required value="@Model.Nome">
+            </span>
+            <span class="form-group col-md-4">
+                <label for="Apelido" class=""><b>Nick</b> (apelido)</label>
+                <input type="text" name="Apelido" id="Apelido" class="form-control" placeholder="Nick" value="@Model.Apelido">
+            </span>
+            <span class="form-group col-md-2">
+                <label for="Apelido" class=""><b>Código</b> (pulseira)</label>
+                <input type="text" name="Codigo" id="Codigo" class="form-control" placeholder="Código" value="@Model.Codigo">
+            </span>
+        </span>
+
+        <span class="form-row">
+            <span class="form-group col-md-6">
+                <label for="CPF"><b>CPF</b></label>
+                <input type="tel" class="form-control" maxlength="14" min="14" id="CPF" name="CPF" placeholder="CPF" value="@Model.CPF">
+            </span>
+
+            <span class="form-group col-md-6">
+                <label for="RG"><b>RG</b> (opcional)</label>
+                <input type="tel" class="form-control" id="RG" name="RG" placeholder="RG" value="@Model.RG" maxlength="15">
+            </span>
+        </span>
+        <span class="form-row">
+            <span class="form-group col-md-3">
+                <label for="Agencia"><b>Agência</b></label>
+                <input type="tel" class="form-control" id="Agencia" name="Agencia" placeholder="Agência" value="@Model.Agencia">
+            </span>
+
+            <span class="form-group col-md-4">
+                <label for="Conta"><b>Conta Bancária</b></label>
+                <input type="tel" class="form-control" id="Conta" name="Conta" placeholder="Nº Conta" value="@Model.Conta">
+            </span>
+
+            <span class="form-group col-md-5">
+                <label for="Celular"><b>Celular</b></label>
+                <input type="tel" class="form-control" maxlength="15" id="Celular" name="Celular" placeholder="Celular" value="@Model.Celular">
+            </span>
+        </span>
+        <span class="form-row">
+            <span class="form-group col-md-5">
+                <label for="Telefone" class=""><b>Telefone</b></label>
+                <input type="text" name="Telefone" id="Telefone" class="form-control" maxlength="14" placeholder="Fone" value="@Model.Telefone">
+            </span>
+            <span class="form-group col-md-7">
+                <label for="Email" class=""><b>Email</b></label>
+                <input type="text" name="Email" id="Email" class="form-control" placeholder="Email" value="@Model.Email">
+            </span>
+        </span>
+        <span class="form-row">
+            <span class="form-group col-md-8">
+                <label for="Endereco" class=""><b>Endereço</b></label>
+                <input type="text" name="Endereco" id="Endereco" class="form-control" placeholder="Rua" value="@Model.Endereco">
+            </span>
+            <span class="form-group col-md-4">
+                <label for="Numero" class=""><b>Número</b></label>
+                <input type="text" name="Numero" id="Numero" class="form-control" placeholder="N°" value="@Model.Numero" maxlength="10">
+            </span>
+        </span>
+        <span class="form-row">
+            <span class="form-group col-md-12">
+                <label for="Complemento" class=""><b>Complemento</b></label>
+                <input type="text" name="Complemento" id="Complemento" class="form-control" placeholder="Complemento" value="@Model.Complemento">
+            </span>
+        </span>
+    </fieldset>
+
+    <span class="">
+        <input type="submit" class="btn-dark btn-lg btn-block" value="Cadastrar" />
+    </span>
+</form>
+<script src="~/Content/CadastroCliente.js"></script>
+<script src="~/Content/jquery.mask.js"></script>

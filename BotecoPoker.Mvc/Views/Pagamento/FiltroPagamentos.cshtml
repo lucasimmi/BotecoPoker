@@ -1,0 +1,60 @@
+﻿@using BotecoPoker.Dominio.Entidades
+@using BotecoPoker.Dominio.modelos
+@model PaginacaoModel<Cliente, FiltroPagamento>
+
+<form class="form-control-lg" action="@Url.Action("FiltroPagamentos","Pagamento")" method="get">
+    <h1 align="center">Pesquisa de Clientes com Pendências</h1>
+    <fieldset class="form-control-lg">
+        <div class="form-row">
+            <div class="col-md-5">
+                <label class="" for="Nome"><b>Nome</b></label>
+                <input type="text" class="form-control" id="Nome" name="PaginacaoModel.Filtro.NomeCliente" placeholder="Nome" value="@Model.Filtro.NomeCliente">
+            </div>
+            <div class="col-md-4">
+                <label class="" for="Nick"><b>Nick</b></label>
+                <input type="text" class="form-control" name="PaginacaoModel.Filtro.ApelidoCliente" id="Apelido" placeholder="Apelido" value="@Model.Filtro.ApelidoCliente">
+            </div>
+            <div class="col-md-3">
+                <label class="" for="Codigo"><b>Código</b></label>
+                <input type="text" class="form-control" id="Codigo" name="PaginacaoModel.Filtro.CodigoCliente" placeholder="Código do dia" value="@Model.Filtro.CodigoCliente">
+            </div>
+        </div>
+    </fieldset>
+    <div class="btn-block">
+        <button type="submit" class="btn btn-dark btn-lg wt100">Pesquisar</button>
+    </div>
+</form>
+<br />
+<table class="table table-sm table-dark">
+    <thead class="">
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Nick</th>
+            <th scope="col">Código</th>
+            <th scope="col">Conta Cliente</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListaModel)
+        {
+            <tr>
+                <td>@item.Nome</td>
+                <td>@item.Apelido</td>
+                <td>@item.Codigo</td>
+                <td><a class="btn-dark" href="@Url.Action("PendenciasCliente", new { idCliente = item.Id })">Efetuar Pagamento</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<input hidden value="@Model.Pagina" id="pagina" />
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        @foreach (int pagina in Model.QtdPaginas)
+        {
+            <li class="page-item"><a class="page-link @Model.PrintaPaginaSelecionada(pagina, Model.Pagina)" href="@Url.Action("FiltroPagamentos", new PaginacaoModel<Cliente, FiltroPagamento>(Model,pagina))">@pagina</a></li>
+        }
+    </ul>
+</nav>

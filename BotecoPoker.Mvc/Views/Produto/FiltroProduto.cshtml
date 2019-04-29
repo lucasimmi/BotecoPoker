@@ -1,0 +1,63 @@
+﻿@using BotecoPoker.Dominio.Entidades
+@using BotecoPoker.Dominio.modelos
+@model PaginacaoModel<Produto, FiltroProduto>
+<a type="button" class="btn btn-dark btn-lg" href="@Url.Action("CadastroProduto","Produto")">Incluir Produto</a>
+<form class="form-control-lg" method="post" action="@Url.Action("FiltroProduto","Produto")">
+    <h1 align="center">Pesquisa de Produtos</h1>
+
+    <fieldset class="form-control-lg">
+        <div class="form-row">
+            <div class="col-md-5">
+                <label class="" for="Nome"><b>Nome</b></label>
+                <input type="text" class="form-control" name="Filtro.Nome" id="Nome" placeholder="Nome" value="@Model.Filtro.Nome">
+            </div>
+        </div>
+    </fieldset>
+    <div class="btn-block">
+        <button type="submit" class="btn btn-dark btn-lg wt100">Pesquisar</button>
+    </div>
+</form>
+<br />
+<table class="table table-sm table-dark">
+    <thead>
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Qtd Estoque</th>
+            <th scope="col">Valor</th>
+            <th scope="col">Valor Compra</th>
+            <th scope="col">Alteração</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListaModel)
+        {
+
+            <tr>
+                <td>@item.Nome</td>
+                <td>@item.QtdEstoque</td>
+                <td>@item.FormatarValor(item.Valor)</td>
+                <td>@item.FormatarValor(item.ValorCompra)</td>
+                <td><a class="btn-dark" href="@Url.Action("BuscarPorId", new { Id = item.Id })">Alterar</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<input hidden value="@Model.Pagina" id="pagina" />
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+      @foreach (int pagina in Model.QtdPaginas)
+        {
+            <li class="page-item"><a class="page-link @Model.PrintaPaginaSelecionada(pagina, Model.Pagina)" href="@Url.Action("FiltroProduto", new PaginacaoModel<Produto, FiltroProduto>(Model, pagina))">@pagina</a></li>
+        }
+    </ul>
+</nav>
+
+<script>
+    debugger;
+    var pagina = document.getElementById("pagina").value;
+    if (pagina != 1)
+        window.scrollTo(0, document.body.scrollHeight);
+</script>
+

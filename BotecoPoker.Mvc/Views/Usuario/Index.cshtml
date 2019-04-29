@@ -1,0 +1,57 @@
+﻿@{
+    var erros = (ViewBag?.erros == "" || ViewBag?.erros == null) ? "" : ViewBag.erros;
+    var classeErro = (erros == "" || erros == null) ? "" : "alert alert-danger";
+    dynamic usuario = (ViewBag.usuario == null) ? new Usuario() : ViewBag.usuario;
+}
+@using BotecoPoker.Dominio.Entidades
+@model List<Usuario>
+
+<form class="form-control-lg" action="@Url.Action("Gravar","Usuario")" , method="post">
+    <h1 align="center">Cadastro de Funcionários</h1>
+    <div class="@classeErro" role="alert">
+        @erros
+    </div>
+    <fieldset class="form-control-lg">
+        <div class="form-row">
+            <div class="col-md-6">
+                <label class="" for="Nome"><b>Nome</b></label>
+                <input type="text" class="form-control" id="Nome" name="Nome" placeholder="Nome" value="@usuario.Nome">
+            </div>
+            <div class="col-md-6">
+                <label class="" for="Nick"><b>Login</b></label>
+                <input type="text" class="form-control" name="Login" id="Login" placeholder="Login" value="@usuario.Login">
+            </div>
+            <div class="col-md-6">
+                <label class="" for="Senha"><b>Senha</b></label>
+                <input type="password" class="form-control" id="Senha" name="Senha" placeholder="Senha" value="@usuario.Senha">
+            </div>
+            <div class="col-md-6">
+                <label class="" for="Senha"><b>Digite novamente a Senha</b></label>
+                <input type="password" class="form-control" id="Senha" name="ConfirmaSenha" placeholder="Confirma Senha" value="@usuario.ConfirmaSenha">
+            </div>
+        </div>
+    </fieldset>
+    <div class="btn-block">
+        <button type="submit" class="btn btn-dark btn-lg wt100">Cadastrar</button>
+    </div>
+</form>
+
+<br />
+<h2 align="center">Funcionários Cadastrados</h2>
+<table class="table table-sm table-dark">
+    <thead class="">
+        <tr>
+            <th scope="col">Nome</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Nome</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
